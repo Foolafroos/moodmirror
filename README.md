@@ -86,6 +86,28 @@ La thèse centrale — *ce que tu consommes shape ton humeur* — n'est plus une
 
 ---
 
+## Phase 0 — squelette fonctionnel (testé sur macOS 26)
+
+```bash
+python -m moodmirror collect --days 30   # collecte + analyse des contenus
+python -m moodmirror checkin 4           # check-in d'humeur (1-5)
+python -m moodmirror status              # état de la base locale
+```
+
+Résultats réels de la première collecte :
+
+| Source | Statut | Note |
+|---|---|---|
+| Chrome History | ✅ lisible | SQLite local, lecture en copie |
+| Safari History | ⛔ bloqué TCC | Full Disk Access requis pour le terminal |
+| Screen Time (knowledgeC.db) | ⚠️ vide / protégé | migration Biome confirmée sur macOS 26 — les données d'usage sont dans les streams Biome, non lues ici |
+
+**Conclusion Phase 0 : la collecte navigateur est le socle fiable.** L'analyse de contenu fonctionne en local (lexique sentiment FR/EN hors-ligne + option LM Studio), avec des niveaux de confiance explicites : `high` (texte complet analysé par LLM local), `medium` (texte récupéré, lexique), `low` (titre seulement — vidéos, tweets).
+
+Aucune donnée ne quitte la machine. La base vit dans `~/.moodmirror/` et est exclue du repo via `.gitignore`.
+
+---
+
 ## Status
 
 🟢 **En développement** — Phase architecture SaaS.
