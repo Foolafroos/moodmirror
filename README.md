@@ -92,7 +92,10 @@ La thèse centrale — *ce que tu consommes shape ton humeur* — n'est plus une
 python -m moodmirror collect --days 30   # collecte + analyse des contenus
 python -m moodmirror checkin 4           # check-in d'humeur (1-5)
 python -m moodmirror status              # état de la base locale
+python -m moodmirror report              # suivi jour/semaine/mois/année (+ historique)
 ```
+
+**Suivi par cycles** — `report` agrège chaque fenêtre (jour, semaine ISO, mois, année) : consommation (visites, valence moyenne des contenus), humeur (check-ins, moyenne, variance) et la **corrélation contenu × humeur** (Pearson sur les points horodatés appairés). Chaque calcul stocke un *snapshot* dans la base (upsert par cycle), donc l'historique des tendances se reconstruit au fil du temps — le check est reproductible et auditable.
 
 Résultats réels de la première collecte :
 

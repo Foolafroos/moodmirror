@@ -49,6 +49,18 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT
 );
+
+-- Snapshots de cycles (daily/weekly/monthly/yearly) — un par cycle, upsert.
+-- Permet de reconstruire les tendances dans le temps (history).
+CREATE TABLE IF NOT EXISTS snapshots (
+    id INTEGER PRIMARY KEY,
+    period TEXT NOT NULL,           -- daily | weekly | monthly | yearly
+    period_key TEXT NOT NULL,       -- 2026-08-28 | 2026-W35 | 2026-08 | 2026
+    computed_at INTEGER NOT NULL,
+    stats TEXT NOT NULL,            -- JSON agrégé
+    UNIQUE(period, period_key)
+);
+CREATE INDEX IF NOT EXISTS idx_snapshots_period ON snapshots(period, period_key);
 """
 
 

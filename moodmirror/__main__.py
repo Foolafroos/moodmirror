@@ -4,6 +4,8 @@ Usage :
   python -m moodmirror collect [--days 14] [--limit 40]   collecte + analyse
   python -m moodmirror checkin [1-5] [--note "texte"]     check-in d'humeur
   python -m moodmirror status                             état de la base
+  python -m moodmirror report [daily weekly monthly yearly]
+                                                          suivi par cycles (+ historique)
 """
 from __future__ import annotations
 
@@ -18,6 +20,16 @@ from .db import connect
 def cmd_collect(args) -> None:
     from .collector import run_collect
     print(run_collect(days=args.days, analyze_limit=args.limit))
+
+
+def cmd_report(args) -> None:
+    from .report import run_report
+    periods = args.periods or ["daily", "weekly", "monthly", "yearly"]
+    valid = {"daily", "weekly", "monthly", "yearly"}
+    bad = [p for p in periods if p not in valid]
+    if bad:
+        sys.exit(f"Période(s) invalide(s) : {bad} — attends daily/weekly/monthly/yearly.")
+    print(run_report(periods, with_history=not args.no_history))
 
 
 def cmd_checkin(args) -> None:
@@ -85,6 +97,13 @@ def main() -> None:
 
     s = sub.add_parser("status", help="état de la base locale")
     s.set_defaults(fn=cmd_status)
+
+    r = sub.add_parser("report", help="suivi par cycles (jour/semaine/mois/année)")
+    r.add_argument("periods", nargs="*",
+                   help="cycles à calculer : daily weekly monthly yearly (défaut : les quatre)")
+    r.add_argument("--no-history", action="store_true",
+                   help="ne pas afficher l'historique des cycles passés")
+    r.set_defaults(fn=cmd_report)
 
     args = p.parse_args()
     args.fn(args)
