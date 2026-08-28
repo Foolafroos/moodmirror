@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Data (jamais de données brutes dans le repo)
+*.db
+*.sqlite3
+*.sqlite
+data/
+exports/
+*.segb
+
+# Secrets (sécurité : rien ne doit jamais être commité)
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+config.yaml
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
