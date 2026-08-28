@@ -1,3 +1,4 @@
 # MoodMirror Phase 0 — aucune dépendance externe.
 # Python >= 3.9, stdlib uniquement (sqlite3, urllib, html.parser, json).
-# Optionnel : LM Studio actif sur localhost:1234 pour l'analyse LLM locale.
+# Zéro provider, zéro LM Studio : l'analyse de contenu est 100 % locale
+# (lexique sentiment FR/EN hors-ligne + extraction de texte locale).

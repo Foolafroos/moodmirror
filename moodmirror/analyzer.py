@@ -7,12 +7,11 @@ Trois niveaux selon ce qu'on a réellement sous la main :
                        titre, confiance marquée "low" (on ne fabrique rien)
 - tweet/X          → lecture bloquée sans auth → marque "low confidence"
 
-Bonus optionnel : si LM Studio expose un modèle (http://localhost:1234),
-analyse plus riche (thème + résumé). Sinon fallback automatique sur lexique.
+Zéro dépendance externe : pas de LM Studio, pas de provider, pas d'appel
+réseau pour l'analyse. Tout est hors-ligne (lexique + extraction locale).
 """
 from __future__ import annotations
 
-import json
 import re
 import urllib.request
 from html.parser import HTMLParser
@@ -173,39 +172,6 @@ def extract_topic(text: str, top_n: int = 3) -> str | None:
 
 
 # ---------------------------------------------------------------------------
-# Analyse optionnelle via LM Studio (local uniquement)
-# ---------------------------------------------------------------------------
-
-LMSTUDIO_URL = "http://localhost:1234/v1/chat/completions"
-
-
-def llm_analyze(text: str, timeout: int = 60) -> dict | None:
-    """Si un modèle est chargé dans LM Studio → analyse riche. Sinon None."""
-    prompt = (
-        "Analyse ce texte pour une app de bien-être numérique. "
-        'Réponds UNIQUEMENT en JSON valide : {"valence": nombre entre -1 et 1, '
-        '"theme": "un court thème", "resume": "une phrase max"}.\n\n'
-        f"Texte :\n{text[:3000]}"
-    )
-    body = json.dumps({
-        "model": "local",
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 120,
-        "temperature": 0.2,
-    }).encode()
-    req = urllib.request.Request(LMSTUDIO_URL, data=body,
-                                 headers={"Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            data = json.loads(r.read())
-        content = data["choices"][0]["message"]["content"]
-        m = re.search(r"\{.*\}", content, re.DOTALL)
-        return json.loads(m.group(0)) if m else None
-    except Exception:
-        return None
-
-
-# ---------------------------------------------------------------------------
 # API publique du module
 # ---------------------------------------------------------------------------
 
@@ -227,19 +193,6 @@ def analyze_content(url: str, title: str | None = None) -> dict:
         text, fetched_title = fetch_text(url)
     if title is None:
         title = fetched_title
-
-    llm = None
-    if text:
-        llm = llm_analyze(text)
-
-    if llm and isinstance(llm.get("valence"), (int, float)):
-        return {
-            "valence": max(-1.0, min(1.0, float(llm["valence"]))),
-            "topic": llm.get("theme") or extract_topic(text),
-            "method": "llm", "confidence": "high",
-            "meta": {**meta, "resume": llm.get("resume")},
-            "text_excerpt": text[:2000],
-        }
 
     source_text = text or title or ""
     v, pos, neg = lexicon_valence(source_text)

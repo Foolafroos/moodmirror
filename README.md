@@ -105,7 +105,7 @@ Résultats réels de la première collecte :
 | Safari History | ⛔ bloqué TCC | Full Disk Access requis pour le terminal |
 | Screen Time (knowledgeC.db) | ⚠️ vide / protégé | migration Biome confirmée sur macOS 26 — les données d'usage sont dans les streams Biome, non lues ici |
 
-**Conclusion Phase 0 : la collecte navigateur est le socle fiable.** L'analyse de contenu fonctionne en local (lexique sentiment FR/EN hors-ligne + option LM Studio), avec des niveaux de confiance explicites : `high` (texte complet analysé par LLM local), `medium` (texte récupéré, lexique), `low` (titre seulement — vidéos, tweets).
+**Conclusion Phase 0 : la collecte navigateur est le socle fiable.** L'analyse de contenu fonctionne **100 % en local, sans aucun provider ni LM Studio** (lexique sentiment FR/EN hors-ligne + extraction de texte locale), avec des niveaux de confiance explicites : `medium` (texte récupéré et analysé par lexique), `low` (titre seulement — vidéos, tweets). Aucun appel réseau n'est fait pour traiter le contenu.
 
 Aucune donnée ne quitte la machine. La base vit dans `~/.moodmirror/` et est exclue du repo via `.gitignore`.
 

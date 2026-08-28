@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS analyses (
     text_excerpt TEXT,                -- extrait analysé (borné, ~2k chars)
     valence REAL,                     -- -1..+1
     topic TEXT,                       -- proxy de thème (mot-clés dominants)
-    method TEXT NOT NULL,             -- lexicon | llm | title-only
-    confidence TEXT NOT NULL DEFAULT 'medium',  -- high | medium | low
+    method TEXT NOT NULL,             -- lexicon | title-only
+    confidence TEXT NOT NULL DEFAULT 'medium',  -- medium | low (100% local)
     meta TEXT                         -- JSON libre (type média, erreurs...)
 );
 CREATE INDEX IF NOT EXISTS idx_analyses_visit ON analyses(visit_id);
